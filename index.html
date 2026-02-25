@@ -162,7 +162,8 @@
       do {
         pos = {x: Math.floor(Math.random()*COLS), y: Math.floor(Math.random()*ROWS)};
       } while (snake.some(s => s.x===pos.x && s.y===pos.y));
-      food = pos;
+      colorIdx = (colorIdx + 1) % COLORS.length;
+      food = { ...pos, color: COLORS[colorIdx] };
     }
 
     function updateUI() {
@@ -187,8 +188,7 @@
         if (score > best) { best = score; localStorage.setItem('snakeBest', best); }
         level = Math.floor(score / 100) + 1;
         speed = Math.max(60, 150 - (level-1)*12);
-        colorIdx = (colorIdx + 1) % COLORS.length;
-        snakeColor = COLORS[colorIdx];
+        snakeColor = food.color;
         placeFood();
         clearInterval(loop);
         loop = setInterval(step, speed);
@@ -217,8 +217,8 @@
 
       // Food
       const fx = food.x * CELL, fy = food.y * CELL;
-      ctx.fillStyle = '#f87171';
-      ctx.shadowColor = '#f87171';
+      ctx.fillStyle = food.color;
+      ctx.shadowColor = food.color;
       ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.arc(fx+CELL/2, fy+CELL/2, CELL/2-2, 0, Math.PI*2);
