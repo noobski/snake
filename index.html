@@ -138,7 +138,8 @@
     const COLS = 20, ROWS = 20;
     const CELL = canvas.width / COLS;
 
-    let snake, dir, nextDir, food, score, best, level, speed, loop, running;
+    const COLORS = ['#4ade80','#60a5fa','#f472b6','#fb923c','#a78bfa','#34d399','#facc15','#f87171','#38bdf8','#c084fc'];
+    let snake, dir, nextDir, food, score, best, level, speed, loop, running, snakeColor, colorIdx;
 
     best = parseInt(localStorage.getItem('snakeBest') || '0');
     document.getElementById('best').textContent = best;
@@ -150,6 +151,8 @@
       score = 0;
       level = 1;
       speed = 150;
+      colorIdx = 0;
+      snakeColor = COLORS[0];
       placeFood();
       updateUI();
     }
@@ -184,6 +187,8 @@
         if (score > best) { best = score; localStorage.setItem('snakeBest', best); }
         level = Math.floor(score / 100) + 1;
         speed = Math.max(60, 150 - (level-1)*12);
+        colorIdx = (colorIdx + 1) % COLORS.length;
+        snakeColor = COLORS[colorIdx];
         placeFood();
         clearInterval(loop);
         loop = setInterval(step, speed);
@@ -223,8 +228,8 @@
       // Snake
       snake.forEach((seg, i) => {
         const ratio = 1 - (i / snake.length) * 0.5;
-        ctx.fillStyle = i === 0 ? '#4ade80' : `rgba(74,222,128,${ratio})`;
-        ctx.shadowColor = i === 0 ? '#4ade80' : 'transparent';
+        ctx.fillStyle = i === 0 ? snakeColor : snakeColor + Math.floor(ratio * 255).toString(16).padStart(2,'0');
+        ctx.shadowColor = i === 0 ? snakeColor : 'transparent';
         ctx.shadowBlur = i === 0 ? 10 : 0;
         const pad = i === 0 ? 1 : 2;
         ctx.beginPath();
